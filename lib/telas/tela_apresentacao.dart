@@ -6,6 +6,7 @@ import 'package:jkgbrasil/telas/menu_barra.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import 'package:jkgbrasil/telas/tela_ordens_servicos.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
+import '../services/secure_storage.dart';
 
 class TelaApresentacao extends StatefulWidget{
   @override
@@ -23,13 +24,17 @@ class _TelaApresentacaoState extends State<TelaApresentacao>{
     });
   }
 
-  void _checkLogin(){
-    if(usuarioLogado){ //pagina inicial
-        //se não tiver uma estampadora carregada na session
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),);
-        //se tiver uma estampadora carregada na session
+  void _checkLogin() async {
+    Map<String, String?> usuarioData = await SecureStorage.getUserData();
+    bool existeEstampadora = await SecureStorage.getExisteEstampadora();
+
+    if (usuarioData.isNotEmpty) {
+      if (existeEstampadora) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MenuBarra()),);
-    }else{ // pagina de login
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),);
+      }
+    } else {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TelaLogin()),);
     }
   }
