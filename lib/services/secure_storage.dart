@@ -5,11 +5,13 @@ class SecureStorage {
   static final _storage = FlutterSecureStorage();
 
   static Future<void> saveUserData({
+    required String token,
     required String email,
     required String nome,
     required String cpf,
     required String id,
   }) async {
+    await _storage.write(key: 'token', value: token);
     await _storage.write(key: 'email', value: email);
     await _storage.write(key: 'nome', value: nome);
     await _storage.write(key: 'cpf', value: cpf);
@@ -25,12 +27,14 @@ class SecureStorage {
   }
 
   static Future<Map<String, String?>> getUserData() async {
+    final token = await _storage.read(key: 'token');
     final email = await _storage.read(key: 'email');
     final nome = await _storage.read(key: 'nome');
     final cpf = await _storage.read(key: 'cpf');
     final id = await _storage.read(key: 'id');
 
     return {
+      'token': token,
       'email': email,
       'nome': nome,
       'cpf': cpf,
@@ -50,14 +54,25 @@ class SecureStorage {
 
   static Future<bool> getExisteEstampadora() async {
     final estampadora_id = await _storage.read(key: 'estampadora_id');
-    return estampadora_id != null;
+    print("opaaaaa getestampadora: $estampadora_id");
+    if(estampadora_id == null){
+      return false;
+    }else{
+      return true;
+    }
   }
 
   static Future<void> deleteUserData() async {
+    //usuario logado
+    await _storage.delete(key: 'token');
     await _storage.delete(key: 'email');
     await _storage.delete(key: 'nome');
     await _storage.delete(key: 'cpf');
     await _storage.delete(key: 'id');
+    //estampadora selecionada pelo usuario
+    await _storage.delete(key: 'estampadora_id');
+    await _storage.delete(key: 'estampadora_nome');
+
   }
 }
 

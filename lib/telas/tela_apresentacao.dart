@@ -14,7 +14,6 @@ class TelaApresentacao extends StatefulWidget{
 }
 
 class _TelaApresentacaoState extends State<TelaApresentacao>{
-  bool usuarioLogado = false; //supondo que o usuário está logado
 
   @override
   void initState(){
@@ -27,8 +26,7 @@ class _TelaApresentacaoState extends State<TelaApresentacao>{
   void _checkLogin() async {
     Map<String, String?> usuarioData = await SecureStorage.getUserData();
     bool existeEstampadora = await SecureStorage.getExisteEstampadora();
-
-    if (usuarioData.isNotEmpty) {
+    if (usuarioData['id'] != null) {
       if (existeEstampadora) {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MenuBarra()),);
       } else {

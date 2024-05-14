@@ -56,16 +56,16 @@ class TelaLogin extends StatelessWidget{
                   onPressed: () async{
                     try{
                       final response = await ApiService.login(email, senha);
-
                       await SecureStorage.saveUserData(
                         email: email,
                         nome: response['user']['nome'].toString(),
                         cpf: response['user']['cpf'].toString(),
                         id: response['user']['id'].toString(),
+                        token: response['token']['plainTextToken'].toString(),
                       );
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()), // Substitua "ProximaTela" pelo nome da próxima tela
+                        MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),
                       );
                     }catch(e){
                       print('Erro ao fazer login: $e');
