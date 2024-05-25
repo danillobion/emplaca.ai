@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jkgbrasil/telas/menu_barra.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import '../services/api_service.dart';
 import '../services/secure_storage.dart';
@@ -44,6 +45,7 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
   List<Item> _estampadorasItems = [];
   Map<String, dynamic> _listaEstampadoras = {};
 
+  // Alert - confirmar logout
   Future<void> _confirmarLogout() async {
     return showDialog(
       context: context,
@@ -74,11 +76,28 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
     );
   }
 
+  Future<void> _selecionarEstampadora(estampadora_id,estampadora_nome,estampadora_cnpj_formatado,estampadora_tipo_nome,estampadora_tipo) async {
+    await SecureStorage.saveEstampadoraData(
+        estampadora_id: estampadora_id,
+        estampadora_nome: estampadora_nome,
+        estampadora_cnpj_formatado: estampadora_cnpj_formatado,
+        estampadora_tipo_nome: estampadora_tipo_nome,
+        estampadora_tipo: estampadora_tipo,
+    );
+    Map<String, String?>? usuarioData = await SecureStorage.getUserData();
+
+    if(usuarioData['estampadora_id'] != null){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MenuBarra()),);
+    }
+
+  }
+
   @override
   void initState() {
     super.initState();
     carregarEstampadoras();
   }
+
 
   void carregarEstampadoras() async {
     Map<String, String?>? usuarioData = await SecureStorage.getUserData();
@@ -92,7 +111,13 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
               estampadora['estado'].toString(),
               estampadora['sigla'].toString(),
               onTap: () {
-                print('Item ${estampadora['nome']} foi tocado');
+                _selecionarEstampadora(
+                    estampadora['id'].toString(),
+                    estampadora['nome'].toString(),
+                    estampadora['cnpj_formatado'].toString(),
+                    estampadora['tipo_nome'].toString(),
+                    estampadora['tipo'].toString()
+                );
               },
             );
           }).toList();
@@ -115,6 +140,7 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Selecione uma estampadora'),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app),

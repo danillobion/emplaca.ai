@@ -1,25 +1,26 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/tela_detalhe_ordem_servico.dart';
+import 'package:jkgbrasil/telas/tela_pesquisar.dart';
+import '../services/api_service.dart';
+import '../services/secure_storage.dart';
 
 // Estrutura
-class Item{
-  final String serial;
+class Item {
   final String placa;
-  final String modeloMarca;
+  final String situacao;
   final VoidCallback onTap;
 
-  Item(this.placa, this.serial, this.modeloMarca, {required this.onTap});
+  Item(this.placa, this.situacao, {required this.onTap});
 }
 
 // Componente
-class ItemDaLista extends StatelessWidget{
+class ItemDaLista extends StatelessWidget {
   final List<Item> items;
 
   ItemDaLista(this.items);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Column(
       children: items.map((item) {
         return ListTile(
@@ -27,8 +28,7 @@ class ItemDaLista extends StatelessWidget{
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(item.serial),
-              Text(item.modeloMarca),
+              Text(item.situacao),
             ],
           ),
           onTap: item.onTap,
@@ -38,24 +38,104 @@ class ItemDaLista extends StatelessWidget{
   }
 }
 
-
-class TelaOrdensServicos extends StatelessWidget{
+class TelaOrdensServicos extends StatefulWidget {
   @override
-  Widget build(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Ordens de Serviços'),
-      ),
-      body: Column(
-        children: [
-          ItemDaLista([
-            Item("ABC0123","00000000001","Fiat, Marea", onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaDetalheOrdemServico()));
-            }),
-            Item("ABC0456","00000000002","Fiat, Marea", onTap: () {}),
-            Item("ABC0789","00000000003","Fiat, Marea", onTap: () {}),
-          ]),
-        ],
+  _TelaOrdensServicos createState() => _TelaOrdensServicos();
+}
+
+class _TelaOrdensServicos extends State<TelaOrdensServicos> {
+  List<Item> _ordensServicoItems = [];
+  Map<String, dynamic> _listaOrdensServico = {};
+  String _filtro = "ABE";
+
+  @override
+  void initState() {
+    super.initState();
+    carregarOrdensServico();
+  }
+
+  void carregarOrdensServico() async {
+    Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
+    if (estampadoraData != null && estampadoraData.containsKey('estampadora_id')) {
+      ApiService.listarOrdensServico(estampadoraData['estampadora_id'].toString(), _filtro, "1").then((listaOrdensServico) {
+        if (!mounted) return;
+        setState(() {
+          _ordensServicoItems = listaOrdensServico['ordens_servico'].map<Item>((ordemServico) {
+            return Item(
+              ordemServico['placa'].toString(),
+              ordemServico['situacao'].toString(),
+              onTap: () {},
+            );
+          }).toList();
+        });
+      }).catchError((error) {
+        print('Erro ao carregar as estampadoras: $error');
+      });
+    } else {
+      print('Erro: Não foi possível obter o ID do usuário.');
+    }
+  }
+
+  Future<void> _atualizarLista() async {
+    carregarOrdensServico();
+  }
+
+  void _filtrar(String filtro) {
+    setState(() {
+      _filtro = filtro;
+    });
+    carregarOrdensServico();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3, // Número de abas
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Ordens de Serviço'),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TelaPesquisar()));
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.camera_alt),
+              onPressed: () {},
+            ),
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Aberto'),
+              Tab(text: 'Finalizado'),
+              Tab(text: 'Cancelado'),
+            ],
+            onTap: (index) {
+              switch (index) {
+                case 0:
+                  _filtrar("ABE"); // Aberto
+                  break;
+                case 1:
+                  _filtrar("FIN"); // Finalizado
+                  break;
+                case 2:
+                  _filtrar("CAN"); // Cancelado
+                  break;
+              }
+            },
+          ),
+        ),
+        body: RefreshIndicator(
+          onRefresh: _atualizarLista,
+          child: ListView(
+            children: [
+              ItemDaLista(_ordensServicoItems),
+            ],
+          ),
+        ),
       ),
     );
   }

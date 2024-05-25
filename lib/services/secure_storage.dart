@@ -21,12 +21,23 @@ class SecureStorage {
   static Future<void> saveEstampadoraData({
     required String estampadora_id,
     required String estampadora_nome,
+    required String estampadora_cnpj_formatado,
+    required String estampadora_tipo_nome,
+    required String estampadora_tipo,
   }) async {
     await _storage.write(key: 'estampadora_id', value: estampadora_id);
     await _storage.write(key: 'estampadora_nome', value: estampadora_nome);
+    await _storage.write(key: 'estampadora_cnpj_formatado', value: estampadora_cnpj_formatado);
+    await _storage.write(key: 'estampadora_tipo_nome', value: estampadora_tipo_nome);
+    await _storage.write(key: 'estampadora_tipo', value: estampadora_tipo);
   }
 
   static Future<Map<String, String?>> getUserData() async {
+    final estampadora_id = await _storage.read(key: 'estampadora_id');
+    final estampadora_nome = await _storage.read(key: 'estampadora_nome');
+    final estampadora_cnpj_formatado = await _storage.read(key: 'estampadora_cnpj_formatado');
+    final estampadora_tipo_nome = await _storage.read(key: 'estampadora_tipo_nome');
+    final estampadora_tipo = await _storage.read(key: 'estampadora_tipo');
     final token = await _storage.read(key: 'token');
     final email = await _storage.read(key: 'email');
     final nome = await _storage.read(key: 'nome');
@@ -34,6 +45,11 @@ class SecureStorage {
     final id = await _storage.read(key: 'id');
 
     return {
+      'estampadora_id': estampadora_id,
+      'estampadora_nome': estampadora_nome,
+      'cnpj_formatado': estampadora_cnpj_formatado,
+      'tipo_nome': estampadora_tipo_nome,
+      'tipo': estampadora_tipo,
       'token': token,
       'email': email,
       'nome': nome,
@@ -72,6 +88,9 @@ class SecureStorage {
     //estampadora selecionada pelo usuario
     await _storage.delete(key: 'estampadora_id');
     await _storage.delete(key: 'estampadora_nome');
+    await _storage.delete(key: 'estampadora_cnpj_formatado');
+    await _storage.delete(key: 'estampadora_tipo_nome');
+    await _storage.delete(key: 'estampadora_tipo');
 
   }
 }

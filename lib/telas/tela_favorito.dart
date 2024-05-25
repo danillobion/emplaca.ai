@@ -3,10 +3,11 @@ import 'package:jkgbrasil/telas/tela_sobre.dart';
 
 // Estrutura do componente
 class Item {
-  final String nome;
+  final String titulo;
+  final String subtitulo;
   final VoidCallback onTap;
 
-  Item(this.nome, {required this.onTap});
+  Item(this.titulo,this.subtitulo, {required this.onTap});
 }
 
 // Componente
@@ -20,7 +21,8 @@ class ItemDaLista extends StatelessWidget {
     return Column(
       children: items.map((item) {
         return ListTile(
-          title: Text(item.nome),
+          title: Text(item.titulo),
+          subtitle: Text(item.subtitulo),
           trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFFCCCCCC)),
           onTap: item.onTap,
         );
@@ -30,25 +32,19 @@ class ItemDaLista extends StatelessWidget {
 }
 
 // Tela
-class TelaMenu extends StatelessWidget{
+class TelaFavorito extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu'),
+        title: Text('Favorito'),
         automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
           ItemDaLista([
-            Item("Item A", onTap: () {}),
-            Item("Item B", onTap: () {}),
-            Item("Item C", onTap: () {}),
-            Item("Sobre", onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaSobre()));
-            }),
-            Item("Sair do aplicativo", onTap: () {}),
+            Item("Ler Placa","Use apenas a câmera para ler a placa", onTap: () {}),
           ]),
         ],
       ),
