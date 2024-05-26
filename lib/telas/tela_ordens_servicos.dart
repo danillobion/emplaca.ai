@@ -55,9 +55,7 @@ class _TelaOrdensServicos extends State<TelaOrdensServicos> {
   }
 
   void carregarOrdensServico() async {
-    Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
-    if (estampadoraData != null && estampadoraData.containsKey('estampadora_id')) {
-      ApiService.listarOrdensServico(estampadoraData['estampadora_id'].toString(), _filtro, "1").then((listaOrdensServico) {
+      ApiService.listarOrdensServico(_filtro, "1").then((listaOrdensServico) {
         if (!mounted) return;
         setState(() {
           _ordensServicoItems = listaOrdensServico['ordens_servico'].map<Item>((ordemServico) {
@@ -69,11 +67,8 @@ class _TelaOrdensServicos extends State<TelaOrdensServicos> {
           }).toList();
         });
       }).catchError((error) {
-        print('Erro ao carregar as estampadoras: $error');
+        print('Erro ao carregar as ordens de serviço: $error');
       });
-    } else {
-      print('Erro: Não foi possível obter o ID do usuário.');
-    }
   }
 
   Future<void> _atualizarLista() async {

@@ -4,11 +4,19 @@ import 'package:jkgbrasil/services/api_service.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
 import '../services/secure_storage.dart';
 
-class TelaLogin extends StatelessWidget{
+class TelaLogin extends StatefulWidget {
   @override
-  Widget build(BuildContext context){
-    String email = "";
-    String senha = "";
+  _TelaLoginState createState() => _TelaLoginState();
+}
+
+class _TelaLoginState extends State<TelaLogin> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
@@ -17,15 +25,12 @@ class TelaLogin extends StatelessWidget{
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-
-              Image.asset("assets/logos/logo_emplaca_ai_vertical.png",width: 130),
+              Image.asset("assets/logos/logo_emplaca_ai_vertical.png", width: 130),
 
               SizedBox(height: 20.0),
 
               TextFormField(
-                onChanged: (value) {
-                  email = value;
-                },
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'E-mail',
                   hintText: 'Digite o seu e-mail',
@@ -36,9 +41,7 @@ class TelaLogin extends StatelessWidget{
               SizedBox(height: 20.0),
 
               TextFormField(
-                onChanged: (value) {
-                  senha = value;
-                },
+                controller: _senhaController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Senha',
@@ -49,15 +52,24 @@ class TelaLogin extends StatelessWidget{
 
               SizedBox(height: 20.0),
 
-              Container(
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : Container(
                 width: double.infinity,
                 height: 50.0,
-                child:FilledButton(
-                  onPressed: () async{
-                    try{
-                      final response = await ApiService.login(email, senha);
+                child: ElevatedButton(
+                  onPressed: () async {
+                    setState(() {
+                      _isLoading = true;
+                      _errorMessage = null;
+                    });
+                    try {
+                      final response = await ApiService.login(
+                        _emailController.text,
+                        _senhaController.text,
+                      );
                       await SecureStorage.saveUserData(
-                        email: email,
+                        email: _emailController.text,
                         nome: response['user']['nome'].toString(),
                         cpf: response['user']['cpf'].toString(),
                         id: response['user']['id'].toString(),
@@ -67,8 +79,14 @@ class TelaLogin extends StatelessWidget{
                         context,
                         MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),
                       );
-                    }catch(e){
-                      print('Erro ao fazer login: $e');
+                    } catch (e) {
+                      setState(() {
+                        _errorMessage = 'Erro ao fazer login: $e';
+                      });
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
                   },
                   child: Text('Entrar'),
@@ -76,19 +94,27 @@ class TelaLogin extends StatelessWidget{
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6.0),
                     ),
-                    backgroundColor:Colors.blue[400],
+                    backgroundColor: Colors.blue[400],
                   ),
                 ),
               ),
+
+              if (_errorMessage != null) ...[
+                SizedBox(height: 10.0),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ],
 
               SizedBox(height: 10.0),
 
               Container(
                 width: double.infinity,
                 height: 50.0,
-                child:TextButton(
+                child: TextButton(
                   onPressed: () {
-                    // Lógica para entrar
+                    // Lógica para recuperar a senha
                   },
                   child: Text(
                     'Esqueci a senha',
@@ -102,9 +128,7 @@ class TelaLogin extends StatelessWidget{
                     ),
                   ),
                 ),
-              )
-
-
+              ),
             ],
           ),
         ),

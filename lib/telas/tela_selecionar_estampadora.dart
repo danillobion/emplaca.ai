@@ -123,7 +123,7 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
           }).toList();
         });
       }).catchError((error) {
-        print('Erro ao carregar as estampadoras: $error');
+        print('Erro ao carregar a estampadoras: $error');
       });
     } else {
       print('Erro: Não foi possível obter o ID do usuário.');
