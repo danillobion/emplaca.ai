@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/tela_favorito.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
-import 'package:jkgbrasil/telas/tela_menu.dart';
-import 'package:jkgbrasil/telas/tela_ordens_servicos.dart';
-import 'package:jkgbrasil/telas/tela_pesquisar.dart';
+import 'package:jkgbrasil/telas/menu/tela_menu.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_ordens_servicos.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_pesquisar.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
-import '../services/secure_storage.dart';
+import '../services/storage_service.dart';
+import '../services/database_service.dart';
 import 'package:flutter/services.dart';
 
 class MenuBarra extends StatefulWidget {
@@ -35,6 +36,7 @@ class _MenuBarraState extends State<MenuBarra> {
             TextButton(
               onPressed: () async {
                 await SecureStorage.deleteUserData();
+                await DatabaseService().limparDatabase();
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => TelaLogin()),
@@ -175,7 +177,7 @@ class _MenuBarraState extends State<MenuBarra> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: "Ordens de Serv.",
+            label: "Ordens de Serviço",
           ),
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.favorite_border),

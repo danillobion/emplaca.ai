@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/telas/tela_sobre.dart';
 
 // Estrutura do componente
 class Item {
@@ -30,27 +29,17 @@ class ItemDaLista extends StatelessWidget {
 }
 
 // Tela
-class TelaMenu extends StatelessWidget{
+class TelaSobre extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu'),
-        automaticallyImplyLeading: false,
+        title: Text('Sobre'),
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          ItemDaLista([
-            Item("Item A", onTap: () {}),
-            Item("Item B", onTap: () {}),
-            Item("Item C", onTap: () {}),
-            Item("Sobre", onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaSobre()));
-            }),
-            Item("Sair do aplicativo", onTap: () {}),
-          ]),
-        ],
+      body: Center(
+        child:Text('Conteúdo da tela Sobre'),
       ),
     );
   }

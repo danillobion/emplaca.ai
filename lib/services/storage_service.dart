@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -16,6 +18,7 @@ class SecureStorage {
     await _storage.write(key: 'nome', value: nome);
     await _storage.write(key: 'cpf', value: cpf);
     await _storage.write(key: 'id', value: id);
+    await _storage.write(key: 'modo_offline', value: "true");
   }
 
   static Future<void> saveEstampadoraData({
@@ -30,6 +33,18 @@ class SecureStorage {
     await _storage.write(key: 'estampadora_cnpj_formatado', value: estampadora_cnpj_formatado);
     await _storage.write(key: 'estampadora_tipo_nome', value: estampadora_tipo_nome);
     await _storage.write(key: 'estampadora_tipo', value: estampadora_tipo);
+  }
+
+  static Future<Map<String, String>> toggleModoOffline() async {
+    final modoOffline = await _storage.read(key: 'modo_offline');
+    final newModoOffline = (modoOffline == 'true') ? 'false' : 'true';
+    await _storage.write(key: 'modo_offline', value: newModoOffline);
+    return {'modo_offline': modoOffline ?? 'false'};
+  }
+
+  static Future<bool> getModoOffline() async{
+    final modoOffline = await _storage.read(key: 'modo_offline');
+    return modoOffline == 'false' ? true : false;
   }
 
   static Future<Map<String, String?>> getUserData() async {
@@ -70,7 +85,6 @@ class SecureStorage {
 
   static Future<bool> getExisteEstampadora() async {
     final estampadora_id = await _storage.read(key: 'estampadora_id');
-    print("opaaaaa getestampadora: $estampadora_id");
     if(estampadora_id == null){
       return false;
     }else{
@@ -85,6 +99,7 @@ class SecureStorage {
     await _storage.delete(key: 'nome');
     await _storage.delete(key: 'cpf');
     await _storage.delete(key: 'id');
+    await _storage.delete(key: 'modo_offline');
     //estampadora selecionada pelo usuario
     await _storage.delete(key: 'estampadora_id');
     await _storage.delete(key: 'estampadora_nome');

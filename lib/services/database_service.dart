@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'secure_storage.dart';
+import 'storage_service.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -54,7 +54,7 @@ class DatabaseService {
           id INTEGER PRIMARY KEY,
           placa TEXT,
           situacao TEXT,
-          estampadora_id INTEGER,
+          estampadora_id INTEGER
         )
       ''');
       },
@@ -64,6 +64,8 @@ class DatabaseService {
   // Método para inserir estampadoras em lote
   Future<void> inserirEstampadoraEmLote(List estampadoras) async {
     final db = await database;
+    await db.delete('estampadoras'); //apago tudo
+
     await db.transaction((txn) async {
       for (var estampadora in estampadoras) {
         await txn.insert('estampadoras', estampadora, conflictAlgorithm: ConflictAlgorithm.replace);
@@ -94,6 +96,17 @@ class DatabaseService {
     });
   }
 
+  Future<List<Map<String, dynamic>>> pesquisarOrdemServico(String placa) async{
+    Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
+    String? estampadora_id = estampadoraData['estampadora_id'].toString();
+    final db = await database;
+    var resultado = await db.query(
+      'ordem_servicos',
+      where: 'estampadora_id = ? AND placa LIKE ?',
+      whereArgs: [estampadora_id, '%$placa%'],
+    );
+    return resultado;
+  }
   // Método para obter todas as ordens de serviço
   Future<List<Map<String, dynamic>>> getOrdemServico(String situacao) async {
 
@@ -110,15 +123,15 @@ class DatabaseService {
   }
 
   // Método para apagar todos os registros do banco de dados
-  Future<void> limparDatabase(Database db) async {
-    List<Map<String, dynamic>> tables = await db.rawQuery('SELECT name FROM sqlite_master WHERE type = "table"');
-    for (var table in tables) {
-      String tableName = table['name'];
-      if (tableName != 'sqlite_sequence') { // Não apague a tabela interna de sequência
-        await db.execute('DROP TABLE IF EXISTS $tableName');
-      }
-    }
-    print("Todas as tabelas foram limpas.");
+  Future<void> limparDatabase() async {
+    final db = await database;
+    await db.delete('ordem_servicos');
+  }
+  // Método que informa a quantidade de OS no banco de dados
+  Future<int> contarOrdemServicos() async {
+    final db = await database;
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM ordem_servicos');
+    return Sqflite.firstIntValue(result) ?? 0;
   }
 
 }

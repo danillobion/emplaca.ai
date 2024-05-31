@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'secure_storage.dart';
+import 'storage_service.dart';
 import 'database_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -8,7 +8,6 @@ class ApiService {
   static const String baseUrl = 'http://d.jkgbrasil.com.br/api/v2';
 
   static Future<Map<String, dynamic>> login(String email, String senha) async {
-
     final response = await http.post(
       Uri.parse('$baseUrl/usuario/login'),
       body: {
@@ -16,7 +15,6 @@ class ApiService {
         'password': senha,
       },
     );
-
     if (response.statusCode == 200) {
       await inicializarDatabase(); //inicializar o banco de dados quando logar
       return json.decode(response.body);
@@ -56,13 +54,14 @@ class ApiService {
 
   static Future<Map<String, dynamic>> listarOrdensServico(String situacao, String pagina) async {
     DatabaseService databaseService = DatabaseService();
+    bool modoOffline = await SecureStorage.getModoOffline();
+    int numeroOrdensServico = await databaseService.contarOrdemServicos();
     bool conectado = await estouConectado();
     Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
     Map<String, String?> userData = await SecureStorage.getUserData();
 
     String? token = userData['token'];
     String? estampadora_id = estampadoraData['estampadora_id'].toString();
-
     if (conectado && estampadoraData != null && estampadoraData.containsKey('estampadora_id')) {
       final response = await http.get(
         Uri.parse('$baseUrl/ordens-servico?estampadora_id=$estampadora_id&situacao=$situacao&pagina=$pagina'),
@@ -73,7 +72,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         var dadosJson = json.decode(response.body);
-        await databaseService.inserirOrdemServicosEmLote(dadosJson['ordens_servico']);
+        if(modoOffline){
+          await databaseService.inserirOrdemServicosEmLote(dadosJson['ordens_servico']);
+        }
         return json.decode(response.body);
       } else {
         throw Exception('Falha ao listar as ordens de serviço');
@@ -85,25 +86,38 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> pesquisarOrdensServico(String placa, String pagina) async {
+    bool conectado = await estouConectado();
+    DatabaseService databaseService = DatabaseService();
+    bool modoOffline = await SecureStorage.getModoOffline();
     Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
-    if (estampadoraData != null && estampadoraData.containsKey('estampadora_id')) {
-      Map<String, String?> userData = await SecureStorage.getUserData();
-      String? token = userData['token'];
-      String? estampadora_id = estampadoraData['estampadora_id'].toString();
+    if (conectado) {
+      if (estampadoraData != null && estampadoraData.containsKey('estampadora_id')) {
+        Map<String, String?> userData = await SecureStorage.getUserData();
+        String? token = userData['token'];
+        String? estampadora_id = estampadoraData['estampadora_id'].toString();
 
-      final response = await http.get(
-          Uri.parse('$baseUrl/ordens-servico/pesquisar?estampadora_id=$estampadora_id&placa=$placa&pagina=$pagina'),
-          headers: {
-            'Authorization': 'Bearer $token',
+        final response = await http.get(
+            Uri.parse('$baseUrl/ordens-servico/pesquisar?estampadora_id=$estampadora_id&placa=$placa&pagina=$pagina'),
+            headers: {
+              'Authorization': 'Bearer $token',
+            }
+        );
+
+        if (response.statusCode == 200) {
+          var dadosJson = json.decode(response.body);
+          if(modoOffline){
+            await databaseService.inserirOrdemServicosEmLote(dadosJson['ordens_servico']);
           }
-      );
-
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        throw Exception('Falha ao pesquisar ordem de servico do usuário');
+          return json.decode(response.body);
+        } else {
+          throw Exception('Falha ao pesquisar ordem de servico do usuário');
+        }
       }
+    }else{
+      List<Map<String, dynamic>> ordensServico = await databaseService.pesquisarOrdemServico(placa);
+      return {'ordens_servico': ordensServico};
     }
+
     throw Exception('Seu token de acesso expirou. Por favor, saia do seu aplicativo e entre novamente usando e-mail e senha.');
   }
 

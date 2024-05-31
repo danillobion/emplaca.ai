@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/tela_detalhe_ordem_servico.dart';
-import 'package:jkgbrasil/telas/tela_pesquisar.dart';
-import '../services/api_service.dart';
-import '../services/secure_storage.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_pesquisar.dart';
+import '../../services/api_service.dart';
+import '../../services/storage_service.dart';
 
 // Estrutura
 class Item {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jkgbrasil/telas/menu/tela_modo_offline.dart';
+import 'package:jkgbrasil/telas/menu/tela_sobre.dart';
 
 // Estrutura do componente
 class Item {
@@ -29,17 +31,29 @@ class ItemDaLista extends StatelessWidget {
 }
 
 // Tela
-class TelaSobre extends StatelessWidget{
+class TelaMenu extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sobre'),
-        centerTitle: true,
+        title: Text('Menu'),
+        automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child:Text('Conteúdo da tela detalhe sobre a ordem de serviço'),
+      body: ListView(
+        children: [
+          ItemDaLista([
+            Item("Modo Offline", onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaModoOffline()));
+            }),
+            // Item("Termos de Uso", onTap: () {}),
+            // Item("Políticas de Privacidade", onTap: () {}),
+            Item("Sobre", onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TelaSobre()));
+            }),
+            Item("Sair do aplicativo", onTap: () {}),
+          ]),
+        ],
       ),
     );
   }

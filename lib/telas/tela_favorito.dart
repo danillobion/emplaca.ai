@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/telas/tela_sobre.dart';
+import 'package:jkgbrasil/telas/menu/tela_sobre.dart';
 
 // Estrutura do componente
 class Item {

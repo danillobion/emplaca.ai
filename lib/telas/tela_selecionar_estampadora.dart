@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/menu_barra.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import '../services/api_service.dart';
-import '../services/secure_storage.dart';
+import '../services/storage_service.dart';
 
 
 // Estrutura do componente

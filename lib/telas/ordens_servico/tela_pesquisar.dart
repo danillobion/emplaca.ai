@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../services/api_service.dart';
-import '../services/secure_storage.dart';
+import '../../services/api_service.dart';
+import '../../services/storage_service.dart';
 
 // Estrutura
 class Item {

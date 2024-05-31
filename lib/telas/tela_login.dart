@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/services/api_service.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
-import '../services/secure_storage.dart';
+import '../services/storage_service.dart';
 
 class TelaLogin extends StatefulWidget {
   @override
@@ -81,7 +81,7 @@ class _TelaLoginState extends State<TelaLogin> {
                       );
                     } catch (e) {
                       setState(() {
-                        _errorMessage = 'Erro ao fazer login: $e';
+                        _errorMessage = 'Erro ao fazer login';
                       });
                     } finally {
                       setState(() {
