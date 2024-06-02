@@ -34,7 +34,6 @@ class ItemDaLista extends StatelessWidget {
 class TelaMenu extends StatelessWidget{
   @override
   Widget build(BuildContext context){
-    TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu'),

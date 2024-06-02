@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/telas/tela_favorito.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import 'package:jkgbrasil/telas/menu/tela_menu.dart';
-import 'package:jkgbrasil/telas/ordens_servico/tela_ordens_servicos.dart';
-import 'package:jkgbrasil/telas/ordens_servico/tela_pesquisar.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_ordens_servico.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
 import '../services/storage_service.dart';
 import '../services/database_service.dart';
@@ -56,7 +54,13 @@ class _MenuBarraState extends State<MenuBarra> {
       appBar: AppBar(
         title: Row(
             children:[
-              Image.asset("assets/logos/logo_emplaca_ai_horizontal.png",width: 130),
+              Image.asset("assets/logos/logo_cliente.png",width: 60),
+              // SizedBox(width: 8),
+              // Text("Brasil",
+              //   style: TextStyle(
+              //       color: Color(0xFF26355f),
+              //     fontWeight: FontWeight.bold,
+              //   ),),
             ]
         ),
         automaticallyImplyLeading: false,
@@ -192,7 +196,7 @@ class _MenuBarraState extends State<MenuBarra> {
       body: IndexedStack(
         index: _opcaoSelecionada,
         children: <Widget>[
-          TelaOrdensServicos(),
+          TelaOrdensServico(),
           // TelaFavorito(),
           TelaMenu(),
         ],

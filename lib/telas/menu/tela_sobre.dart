@@ -32,7 +32,6 @@ class ItemDaLista extends StatelessWidget {
 class TelaSobre extends StatelessWidget{
   @override
   Widget build(BuildContext context){
-    TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
         title: Text('Sobre'),

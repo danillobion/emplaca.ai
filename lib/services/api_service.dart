@@ -5,7 +5,8 @@ import 'database_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://d.jkgbrasil.com.br/api/v2';
+  // static const String baseUrl = 'http://192.168.1.8:8080/api/v2'; // local
+  static const String baseUrl = 'http://d.jkgbrasil.com.br/api/v2'; // local
 
   static Future<Map<String, dynamic>> login(String email, String senha) async {
     final response = await http.post(
@@ -55,7 +56,6 @@ class ApiService {
   static Future<Map<String, dynamic>> listarOrdensServico(String situacao, String pagina) async {
     DatabaseService databaseService = DatabaseService();
     bool modoOffline = await SecureStorage.getModoOffline();
-    int numeroOrdensServico = await databaseService.contarOrdemServicos();
     bool conectado = await estouConectado();
     Map<String, String?>? estampadoraData = await SecureStorage.getEstampadoraData();
     Map<String, String?> userData = await SecureStorage.getUserData();

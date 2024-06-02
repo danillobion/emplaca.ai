@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/telas/menu/tela_sobre.dart';
 
 // Estrutura do componente
 class Item {
@@ -35,7 +34,6 @@ class ItemDaLista extends StatelessWidget {
 class TelaFavorito extends StatelessWidget{
   @override
   Widget build(BuildContext context){
-    TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
         title: Text('Favorito'),

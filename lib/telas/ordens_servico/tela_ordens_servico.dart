@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/telas/tela_detalhe_ordem_servico.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_detalhes.dart';
 import 'package:jkgbrasil/telas/ordens_servico/tela_pesquisar.dart';
 import '../../services/api_service.dart';
-import '../../services/storage_service.dart';
 
 // Estrutura
 class Item {
@@ -38,15 +37,25 @@ class ItemDaLista extends StatelessWidget {
   }
 }
 
-class TelaOrdensServicos extends StatefulWidget {
+class TelaOrdensServico extends StatefulWidget {
   @override
   _TelaOrdensServicos createState() => _TelaOrdensServicos();
 }
 
-class _TelaOrdensServicos extends State<TelaOrdensServicos> {
+class _TelaOrdensServicos extends State<TelaOrdensServico> {
   List<Item> _ordensServicoItems = [];
-  Map<String, dynamic> _listaOrdensServico = {};
   String _filtro = "ABE";
+
+  void _selecionarOrdemServico(ordemServico) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TelaDetalhes(
+          ordemServico: ordemServico,
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -62,7 +71,9 @@ class _TelaOrdensServicos extends State<TelaOrdensServicos> {
             return Item(
               ordemServico['placa'].toString(),
               ordemServico['situacao'].toString(),
-              onTap: () {},
+              onTap: () {
+                _selecionarOrdemServico(ordemServico);
+              },
             );
           }).toList();
         });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jkgbrasil/telas/ordens_servico/tela_detalhes.dart';
 import '../../services/api_service.dart';
-import '../../services/storage_service.dart';
 
 // Estrutura
 class Item {
@@ -52,6 +52,17 @@ class _TelaPesquisar extends State<TelaPesquisar> {
   final TextEditingController _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  void _selecionarOrdemServico(ordemServico) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TelaDetalhes(
+          ordemServico: ordemServico,
+        ),
+      ),
+    );
+  }
+
   void _pesquisar() async {
     setState(() {
       _isSearching = true;
@@ -64,7 +75,9 @@ class _TelaPesquisar extends State<TelaPesquisar> {
         _ordens_servico = (listaOrdensServico['ordens_servico'] as List).map((ordemServico) => Item(
           ordemServico['placa'].toString(),
           ordemServico['situacao'].toString(),
-          onTap: () {},
+          onTap: () {
+            _selecionarOrdemServico(ordemServico);
+          },
         )).toList();
       });
     });

@@ -43,7 +43,6 @@ class TelaSelecionarEstampadora extends StatefulWidget {
 
 class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
   List<Item> _estampadorasItems = [];
-  Map<String, dynamic> _listaEstampadoras = {};
 
   // Alert - confirmar logout
   Future<void> _confirmarLogout() async {
@@ -136,7 +135,6 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle boldTextStyle = TextStyle(fontWeight: FontWeight.normal);
     return Scaffold(
       appBar: AppBar(
         title: Text('Selecione uma estampadora'),

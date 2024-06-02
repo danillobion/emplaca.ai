@@ -57,6 +57,19 @@ class DatabaseService {
           estampadora_id INTEGER
         )
       ''');
+
+        // tbl documento_ordem_servicos
+        await db.execute('''
+        CREATE TABLE documento_ordem_servicos (
+          id INTEGER PRIMARY KEY,
+          ordem_servico_id INT,
+          arquivo TEXT,
+          longitude TEXT,
+          latitude TEXT,
+          enviado_por TEXT,
+          created_at TEXT,
+        )
+      ''');
       },
     );
   }
@@ -85,13 +98,26 @@ class DatabaseService {
     final db = await database;
     await db.transaction((txn) async {
       for (var ordem_servico in ordem_servicos) {
-        var body = {
+        var body_ordem_servico = {
           'id': ordem_servico['id'],
           'placa': ordem_servico['placa'],
           'situacao': ordem_servico['situacao'],
           'estampadora_id': ordem_servico['estampadora_id'],
         };
-        await txn.insert('ordem_servicos', body, conflictAlgorithm: ConflictAlgorithm.replace);
+        // for (var documentos in ordem_servico['documento_ordem_servicos']) {
+        //   var body_documento_ordem_servico = {
+        //     'id': documentos['id'],
+        //     'ordem_servico_id': ordem_servico['id'],
+        //     'arquivo': documentos['arquivo'],
+        //     'longitude': documentos['longitude'],
+        //     'latitude': documentos['latitude'],
+        //     'enviado_por': documentos['enviado_por'],
+        //     'created_at': documentos['created_at'],
+        //   };
+        //   await txn.insert('documento_ordem_servicos', body_documento_ordem_servico, conflictAlgorithm: ConflictAlgorithm.replace);
+        // }
+
+        await txn.insert('ordem_servicos', body_ordem_servico, conflictAlgorithm: ConflictAlgorithm.replace);
       }
     });
   }
