@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:jkgbrasil/telas/ordens_servico/tela_detalhes.dart';
 import 'package:jkgbrasil/telas/ordens_servico/tela_pesquisar.dart';
-import '../../services/api_service.dart';
+import '../../providers/ordem_servico_provider.dart';
 
 // Estrutura
 class Item {
@@ -45,6 +46,7 @@ class TelaOrdensServico extends StatefulWidget {
 class _TelaOrdensServicos extends State<TelaOrdensServico> {
   List<Item> _ordensServicoItems = [];
   String _filtro = "ABE";
+  bool _isLoading = false;
 
   void _selecionarOrdemServico(ordemServico) {
     Navigator.push(
@@ -64,22 +66,33 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
   }
 
   void carregarOrdensServico() async {
-      ApiService.listarOrdensServico(_filtro, "1").then((listaOrdensServico) {
-        if (!mounted) return;
-        setState(() {
-          _ordensServicoItems = listaOrdensServico['ordens_servico'].map<Item>((ordemServico) {
-            return Item(
-              ordemServico['placa'].toString(),
-              ordemServico['situacao'].toString(),
-              onTap: () {
-                _selecionarOrdemServico(ordemServico);
-              },
-            );
-          }).toList();
-        });
-      }).catchError((error) {
-        print('Erro ao carregar as ordens de serviço: $error');
+    setState(() {
+      _isLoading = true;
+    });
+
+    final provider = Provider.of<OrdemServicoProvider>(context, listen: false);
+    try {
+      var listaOrdensServico = await provider.listar(_filtro, "1");
+      if (!mounted) return;
+      setState(() {
+        _ordensServicoItems = listaOrdensServico['ordens_servico'].map<Item>((ordemServico) {
+          return Item(
+            ordemServico['placa'].toString(),
+            ordemServico['situacao'].toString(),
+            onTap: () {
+              _selecionarOrdemServico(ordemServico);
+            },
+          );
+        }).toList();
       });
+    } catch (error) {
+      _ordensServicoItems = [];
+      print('Erro ao carregar as ordens de serviço: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _atualizarLista() async {
@@ -136,7 +149,9 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
         ),
         body: RefreshIndicator(
           onRefresh: _atualizarLista,
-          child: ListView(
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : ListView(
             children: [
               ItemDaLista(_ordensServicoItems),
             ],

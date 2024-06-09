@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/configuracoes/tela_modo_offline.dart';
-import 'package:jkgbrasil/telas/configuracoes/tela_sobre.dart';
+import 'package:jkgbrasil/telas/menu_barra.dart';
 
 // Estrutura do componente
 class Item {
@@ -31,12 +31,23 @@ class ItemDaLista extends StatelessWidget {
 }
 
 // Tela
-class TelaMenu extends StatelessWidget{
+class TelaConfiguracoes extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu'),
+        title: Text('Configurações'),
+        centerTitle: true,
+        leading: IconButton( // Define o ícone de volta
+          icon: Icon(Icons.arrow_back), // Ícone de seta para trás
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MenuBarra()),
+                  (route) => false,
+            );
+          },
+        ),
       ),
       body: ListView(
         children: [

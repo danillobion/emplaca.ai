@@ -59,17 +59,17 @@ class DatabaseService {
       ''');
 
         // tbl documento_ordem_servicos
-        await db.execute('''
-        CREATE TABLE documento_ordem_servicos (
-          id INTEGER PRIMARY KEY,
-          ordem_servico_id INT,
-          arquivo TEXT,
-          longitude TEXT,
-          latitude TEXT,
-          enviado_por TEXT,
-          created_at TEXT,
-        )
-      ''');
+      //   await db.execute('''
+      //   CREATE TABLE documento_ordem_servicos (
+      //     id INTEGER PRIMARY KEY,
+      //     ordem_servico_id INT,
+      //     arquivo TEXT,
+      //     longitude TEXT,
+      //     latitude TEXT,
+      //     enviado_por TEXT,
+      //     created_at TEXT,
+      //   )
+      // ''');
       },
     );
   }

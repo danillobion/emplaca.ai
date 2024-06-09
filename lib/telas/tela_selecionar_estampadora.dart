@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jkgbrasil/providers/estampadora_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:jkgbrasil/telas/menu_barra.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
-import '../services/api_service.dart';
 import '../services/storage_service.dart';
 
 
@@ -99,34 +100,32 @@ class _TelaSelecionarEstampadoraState extends State<TelaSelecionarEstampadora> {
 
 
   void carregarEstampadoras() async {
-    Map<String, String?>? usuarioData = await SecureStorage.getUserData();
-
-    if (usuarioData != null && usuarioData.containsKey('id')) {
-      ApiService.listarEstampadorasDoUsuario(usuarioData['id']!).then((listaEstampadoras) {
-        setState(() {
-          _estampadorasItems = listaEstampadoras['lista_perfis_usuario'].map<Item>((estampadora) {
-            return Item(
-              estampadora['nome'].toString(),
-              estampadora['estado'].toString(),
-              estampadora['sigla'].toString(),
-              onTap: () {
-                _selecionarEstampadora(
-                    estampadora['id'].toString(),
-                    estampadora['nome'].toString(),
-                    estampadora['cnpj_formatado'].toString(),
-                    estampadora['tipo_nome'].toString(),
-                    estampadora['tipo'].toString()
-                );
-              },
-            );
-          }).toList();
-        });
-      }).catchError((error) {
-        print('Erro ao carregar a estampadoras: $error');
+    final provider = Provider.of<EstampadoraProvider>(context, listen: false);
+    try {
+      var listaEstampadoras = await provider.listar();
+      if (!mounted) return;
+      setState(() {
+        _estampadorasItems = listaEstampadoras['estampadoras'].map<Item>((estampadora) {
+          return Item(
+            estampadora['nome'].toString(),
+            estampadora['estado'].toString(),
+            estampadora['sigla'].toString(),
+            onTap: () {
+              _selecionarEstampadora(
+                  estampadora['id'].toString(),
+                  estampadora['nome'].toString(),
+                  estampadora['cnpj_formatado'].toString(),
+                  estampadora['tipo_nome'].toString(),
+                  estampadora['tipo'].toString()
+              );
+            },
+          );
+        }).toList();
       });
-    } else {
-      print('Erro: Não foi possível obter o ID do usuário.');
+    } catch (error) {
+      print('Erro ao carregar as estampadoras: $error');
     }
+
   }
 
   Future<void> _atualizarLista() async {

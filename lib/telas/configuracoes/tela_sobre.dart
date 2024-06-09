@@ -36,6 +36,12 @@ class TelaSobre extends StatelessWidget{
       appBar: AppBar(
         title: Text('Sobre'),
         centerTitle: true,
+        leading: IconButton( // Define o ícone de volta
+          icon: Icon(Icons.arrow_back), // Ícone de seta para trás
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);// Retorna à tela anterior
+          },
+        ),
       ),
       body: Center(
         child:Text('Conteúdo da tela Sobre'),

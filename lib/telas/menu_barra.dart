@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jkgbrasil/telas/configuracoes/tela_configuracoes.dart';
+import 'package:jkgbrasil/telas/configuracoes/tela_modo_offline.dart';
+import 'package:jkgbrasil/telas/configuracoes/tela_sobre.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import 'package:jkgbrasil/telas/menu/tela_menu.dart';
 import 'package:jkgbrasil/telas/ordens_servico/tela_ordens_servico.dart';
@@ -65,12 +68,12 @@ class _MenuBarraState extends State<MenuBarra> {
         ),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Adicione aqui a ação ao pressionar o ícone de notificações
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.notifications),
+          //   onPressed: () {
+          //     // Adicione aqui a ação ao pressionar o ícone de notificações
+          //   },
+          // ),
           Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -162,6 +165,21 @@ class _MenuBarraState extends State<MenuBarra> {
               },
             ),
             ListTile(
+              title: Text('Configurações'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => TelaConfiguracoes()),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Sobre'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TelaSobre()));
+                },
+            ),
+            ListTile(
               title: Text('Sair do aplicativo'),
               onTap: () {
                 _confirmarLogout();
@@ -171,28 +189,28 @@ class _MenuBarraState extends State<MenuBarra> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _opcaoSelecionada,
-        onTap: (opcao) {
-          setState(() {
-            _opcaoSelecionada = opcao;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: "Ordens de Serviço",
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.favorite_border),
-          //   label: "Favorito",
-          // ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
-            label: "Menu",
-          ),
-        ],
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _opcaoSelecionada,
+      //   onTap: (opcao) {
+      //     setState(() {
+      //       _opcaoSelecionada = opcao;
+      //     });
+      //   },
+      //   items: [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.list),
+      //       label: "Ordens de Serviço",
+      //     ),
+      //     // BottomNavigationBarItem(
+      //     //   icon: Icon(Icons.favorite_border),
+      //     //   label: "Favorito",
+      //     // ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.menu),
+      //       label: "Menu",
+      //     ),
+      //   ],
+      // ),
       body: IndexedStack(
         index: _opcaoSelecionada,
         children: <Widget>[

@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jkgbrasil/services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'package:jkgbrasil/services/storage_service.dart';
 import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
-import '../services/storage_service.dart';
+import 'package:jkgbrasil/providers/autenticacao_provider.dart';
 
 class TelaLogin extends StatefulWidget {
   @override
@@ -15,6 +15,38 @@ class _TelaLoginState extends State<TelaLogin> {
   bool _isLoading = false;
   String? _errorMessage;
   bool _isFocused = false;
+
+  Future<void> login() async {
+    final provider = Provider.of<AutenticacaoProvider>(context, listen: false);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      var loginData = await provider.login(_emailController.text, _senhaController.text);
+      await SecureStorage.saveUserData(
+        email: _emailController.text,
+        nome: loginData['user']['nome'].toString(),
+        cpf: loginData['user']['cpf'].toString(),
+        id: loginData['user']['id'].toString(),
+        token: loginData['token']['plainTextToken'].toString(),
+      );
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao fazer login';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +64,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   MediaQuery.of(context).padding.top,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 AnimatedContainer(
@@ -41,9 +73,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   height: _isFocused ? 80 : 100,
                   child: Image.asset("assets/logos/logo_cliente.png"),
                 ),
-
-                SizedBox(height: 50.0),
-
+                SizedBox(height: 30.0),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -62,9 +92,7 @@ class _TelaLoginState extends State<TelaLogin> {
                     });
                   },
                 ),
-
                 SizedBox(height: 20.0),
-
                 TextFormField(
                   controller: _senhaController,
                   obscureText: true,
@@ -84,46 +112,14 @@ class _TelaLoginState extends State<TelaLogin> {
                     });
                   },
                 ),
-
                 SizedBox(height: 20.0),
-
                 _isLoading
                     ? CircularProgressIndicator()
                     : Container(
                   width: double.infinity,
                   height: 50.0,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      setState(() {
-                        _isLoading = true;
-                        _errorMessage = null;
-                      });
-                      try {
-                        final response = await ApiService.login(
-                          _emailController.text,
-                          _senhaController.text,
-                        );
-                        await SecureStorage.saveUserData(
-                          email: _emailController.text,
-                          nome: response['user']['nome'].toString(),
-                          cpf: response['user']['cpf'].toString(),
-                          id: response['user']['id'].toString(),
-                          token: response['token']['plainTextToken'].toString(),
-                        );
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => TelaSelecionarEstampadora()),
-                        );
-                      } catch (e) {
-                        setState(() {
-                          _errorMessage = 'Erro ao fazer login';
-                        });
-                      } finally {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }
-                    },
+                    onPressed: login,
                     child: Text('Entrar'),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -133,7 +129,6 @@ class _TelaLoginState extends State<TelaLogin> {
                     ),
                   ),
                 ),
-
                 if (_errorMessage != null) ...[
                   SizedBox(height: 10.0),
                   Text(
@@ -141,31 +136,11 @@ class _TelaLoginState extends State<TelaLogin> {
                     style: TextStyle(color: Colors.red),
                   ),
                 ],
-
                 SizedBox(height: 10.0),
-
-                Container(
-                  width: double.infinity,
-                  height: 50.0,
-                  child: TextButton(
-                    onPressed: () {
-                      // Lógica para recuperar a senha
-                    },
-                    child: Text(
-                      'Esqueci a senha',
-                      style: TextStyle(
-                        color: Colors.blue[400],
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                      ),
-                    ),
-                  ),
+                Text(
+                  "Desenvolvido por:",
+                  style: TextStyle(color: Colors.grey[600]),
                 ),
-                SizedBox(height: 10.0),
-                Text("Desenvolvido por:", style: TextStyle(color: Colors.grey[600]),),
                 SizedBox(height: 10.0),
                 Image.asset("assets/logos/logo_emplaca_ai_horizontal.png", width: 110),
               ],

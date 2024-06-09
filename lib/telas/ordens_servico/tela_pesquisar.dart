@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:jkgbrasil/telas/ordens_servico/tela_detalhes.dart';
-import '../../services/api_service.dart';
+import '../../providers/ordem_servico_provider.dart';
 
 // Estrutura
 class Item {
@@ -69,7 +70,10 @@ class _TelaPesquisar extends State<TelaPesquisar> {
       _hasSearched = true;
     });
 
-    ApiService.pesquisarOrdensServico(_placa, "1").then((listaOrdensServico) {
+    final provider = Provider.of<OrdemServicoProvider>(context, listen: false);
+    try{
+      var listaOrdensServico = await provider.pesquisar(_placa, "1");
+      if (!mounted) return;
       setState(() {
         _isSearching = false;
         _ordens_servico = (listaOrdensServico['ordens_servico'] as List).map((ordemServico) => Item(
@@ -80,7 +84,22 @@ class _TelaPesquisar extends State<TelaPesquisar> {
           },
         )).toList();
       });
-    });
+    }catch(error){
+      print('Erro ao pesquisar as ordens de serviço: $error');
+    }
+
+    // ApiService.pesquisarOrdensServico(_placa, "1").then((listaOrdensServico) {
+    //   setState(() {
+    //     _isSearching = false;
+    //     _ordens_servico = (listaOrdensServico['ordens_servico'] as List).map((ordemServico) => Item(
+    //       ordemServico['placa'].toString(),
+    //       ordemServico['situacao'].toString(),
+    //       onTap: () {
+    //         _selecionarOrdemServico(ordemServico);
+    //       },
+    //     )).toList();
+    //   });
+    // });
   }
 
   void _pesquisarPlaca(String placa) {

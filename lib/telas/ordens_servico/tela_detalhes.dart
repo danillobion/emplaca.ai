@@ -40,7 +40,7 @@ class TelaDetalhes extends StatelessWidget{
                       Row(
                         children: [
                           Expanded(child: Text("Identificador", style: boldTextStyle)),
-                          Expanded(child: Text("123456", textAlign: TextAlign.right)),
+                          Expanded(child: Text(ordemServico['id'].toString(), textAlign: TextAlign.right)),
                         ],
                       ),
                       Row(

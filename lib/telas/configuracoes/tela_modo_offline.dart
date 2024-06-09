@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jkgbrasil/telas/configuracoes/tela_configuracoes.dart';
+import 'package:jkgbrasil/telas/menu_barra.dart';
 import '../../services/storage_service.dart';
 import '../../services/database_service.dart';
 
@@ -37,6 +39,16 @@ class _TelaModoOfflineState extends State<TelaModoOffline> {
       appBar: AppBar(
         title: Text('Modo Offline'),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => TelaConfiguracoes()),
+                  (route) => false,
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
