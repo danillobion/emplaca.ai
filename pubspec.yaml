@@ -36,6 +36,7 @@ dependencies:
   flutter_secure_storage: ^9.1.1
   connectivity_plus: ^3.0.3
   provider: ^6.1.2
+  google_fonts: ^6.2.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -65,6 +66,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logos/
+    - assets/images/
+    - assets/images/placas/
+    - assets/fonts/
+
+  fonts:
+    - family: FE-Font
+      fonts:
+        - asset: assets/fonts/FE-FONT.TTF
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

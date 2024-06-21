@@ -1,7 +1,7 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jkgbrasil/telas/configuracoes/tela_configuracoes.dart';
-import 'package:jkgbrasil/telas/configuracoes/tela_modo_offline.dart';
 import 'package:jkgbrasil/telas/configuracoes/tela_sobre.dart';
 import 'package:jkgbrasil/telas/tela_login.dart';
 import 'package:jkgbrasil/telas/menu/tela_menu.dart';
@@ -10,6 +10,8 @@ import 'package:jkgbrasil/telas/tela_selecionar_estampadora.dart';
 import '../services/storage_service.dart';
 import '../services/database_service.dart';
 import 'package:flutter/services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:async';
 
 class MenuBarra extends StatefulWidget {
   @override
@@ -18,6 +20,24 @@ class MenuBarra extends StatefulWidget {
 
 class _MenuBarraState extends State<MenuBarra> {
   int _opcaoSelecionada = 0;
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  bool _semConexao = true;
+
+  @override
+  void initState(){
+    super.initState();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result){
+      setState(() {
+        _semConexao = result == ConnectivityResult.none;
+      });
+    });
+  }
+
+  @override
+  void dispose(){
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
 
   // Alert - confirmar logout
   Future<void> _confirmarLogout() async {
@@ -64,6 +84,7 @@ class _MenuBarraState extends State<MenuBarra> {
               //       color: Color(0xFF26355f),
               //     fontWeight: FontWeight.bold,
               //   ),),
+
             ]
         ),
         automaticallyImplyLeading: false,
@@ -85,6 +106,24 @@ class _MenuBarraState extends State<MenuBarra> {
             },
           ),
         ],
+        bottom: _semConexao
+            ? PreferredSize(
+          preferredSize: Size.fromHeight(30.0),
+          child: Container(
+            color: Colors.red,
+            height: 30.0,
+            child: Center(
+              child: Text(
+                "Você está sem conexão",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        )
+            : null,
       ),
       endDrawer: Drawer(
         child: ListView(

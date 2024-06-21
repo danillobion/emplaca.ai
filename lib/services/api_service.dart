@@ -6,7 +6,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ApiService {
   // static const String baseUrl = 'http://192.168.1.8:8080/api/v2'; // local gus
-  static const String baseUrl = 'http://d.jkgbrasil.com.br/api/v2'; // local
+  static const String baseUrl = 'http://192.168.0.101:8080/api/v2'; // local recife
+  // static const String baseUrl = 'http://d.jkgbrasil.com.br/api/v2'; // local
 
   static Future<Map<String, dynamic>> login(String email, String senha) async {
     final response = await http.post(

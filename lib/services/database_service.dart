@@ -54,6 +54,7 @@ class DatabaseService {
           id INTEGER PRIMARY KEY,
           placa TEXT,
           situacao TEXT,
+          marca_modelo TEXT,
           estampadora_id INTEGER
         )
       ''');
@@ -103,6 +104,7 @@ class DatabaseService {
           'placa': ordem_servico['placa'],
           'situacao': ordem_servico['situacao'],
           'estampadora_id': ordem_servico['estampadora_id'],
+          'marca_modelo': ordem_servico['marca_modelo'],
         };
         // for (var documentos in ordem_servico['documento_ordem_servicos']) {
         //   var body_documento_ordem_servico = {
@@ -133,6 +135,7 @@ class DatabaseService {
     );
     return resultado;
   }
+
   // Método para obter todas as ordens de serviço
   Future<List<Map<String, dynamic>>> getOrdemServico(String situacao) async {
 
@@ -153,6 +156,7 @@ class DatabaseService {
     final db = await database;
     await db.delete('ordem_servicos');
   }
+
   // Método que informa a quantidade de OS no banco de dados
   Future<int> contarOrdemServicos() async {
     final db = await database;
