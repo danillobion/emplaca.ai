@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:jkgbrasil/telas/ordens_servico/tela_detalhes.dart';
 import '../../providers/ordem_servico_provider.dart';
+import '../../widgets/placa_mercosul.dart';
+import 'tela_detalhes.dart';
 
 // Estrutura
 class Item {
   final String placa;
   final String situacao;
+  final String tipoVeiculo;
+  final String categoriaVeiculo;
+  final String marcaModeloVeiculo;
+  final String chassi;
   final VoidCallback onTap;
 
-  Item(this.placa, this.situacao, {required this.onTap});
+  Item(
+      this.placa,
+      this.situacao,
+      this.tipoVeiculo,
+      this.categoriaVeiculo,
+      this.marcaModeloVeiculo,
+      this.chassi, {
+        required this.onTap,
+      });
 }
 
 // Componente
@@ -26,11 +39,34 @@ class ItemDaLista extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
         return ListTile(
-          title: Text(item.placa),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          title: Row(
             children: [
-              Text(item.situacao),
+              PlacaMercosul(
+                letras: item.placa.substring(0, 3),
+                numeros: item.placa.substring(3),
+                tipoVeiculo: item.tipoVeiculo,
+                categoriaVeiculo: item.categoriaVeiculo,
+                marcaModeloVeiculo: item.marcaModeloVeiculo,
+              ),
+              SizedBox(width: 2.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.marcaModeloVeiculo,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    SizedBox(height: 0.0),
+                    Text(
+                      item.chassi,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           onTap: item.onTap,
@@ -71,35 +107,32 @@ class _TelaPesquisar extends State<TelaPesquisar> {
     });
 
     final provider = Provider.of<OrdemServicoProvider>(context, listen: false);
-    try{
+    try {
       var listaOrdensServico = await provider.pesquisar(_placa, "1");
       if (!mounted) return;
       setState(() {
         _isSearching = false;
-        _ordens_servico = (listaOrdensServico['ordens_servico'] as List).map((ordemServico) => Item(
+        _ordens_servico = (listaOrdensServico['ordens_servico'] as List)
+            .map((ordemServico) => Item(
           ordemServico['placa'].toString(),
           ordemServico['situacao'].toString(),
+          ordemServico['tipoVeiculo'].toString(),
+          ordemServico['categoria'].toString(),
+          ordemServico['marca_modelo'] == null
+              ? "Não informado"
+              : ordemServico['marca_modelo'].toString(),
+          ordemServico['chassi'] == null
+              ? "Não informado"
+              : ordemServico['chassi'].toString(),
           onTap: () {
             _selecionarOrdemServico(ordemServico);
           },
-        )).toList();
+        ))
+            .toList();
       });
-    }catch(error){
+    } catch (error) {
       print('Erro ao pesquisar as ordens de serviço: $error');
     }
-
-    // ApiService.pesquisarOrdensServico(_placa, "1").then((listaOrdensServico) {
-    //   setState(() {
-    //     _isSearching = false;
-    //     _ordens_servico = (listaOrdensServico['ordens_servico'] as List).map((ordemServico) => Item(
-    //       ordemServico['placa'].toString(),
-    //       ordemServico['situacao'].toString(),
-    //       onTap: () {
-    //         _selecionarOrdemServico(ordemServico);
-    //       },
-    //     )).toList();
-    //   });
-    // });
   }
 
   void _pesquisarPlaca(String placa) {
@@ -154,8 +187,8 @@ class _TelaPesquisar extends State<TelaPesquisar> {
                             width: 1.0,
                           ),
                         ),
-                        contentPadding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                         counterText: '',
                       ),
                       validator: (value) {
@@ -176,10 +209,11 @@ class _TelaPesquisar extends State<TelaPesquisar> {
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide.none,
                       ),
-                      padding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
                     ),
-                    child: Text('Pesquisar', style: TextStyle(color: Colors.blue)),
+                    child: Text('Pesquisar',
+                        style: TextStyle(color: Colors.blue)),
                   ),
                 ],
               ),
@@ -199,10 +233,9 @@ class _TelaPesquisar extends State<TelaPesquisar> {
     } else if (!_hasSearched) {
       return Center(child: Text('Digite o número da placa.'));
     } else if (_ordens_servico.isEmpty) {
-      return Center(child: Text('Nenhum resultado encontrado.'));
+      return Center(child: Text('Nenhuma Ordem de Serviço encontrada.'));
     } else {
       return ItemDaLista(_ordens_servico);
     }
   }
 }
-

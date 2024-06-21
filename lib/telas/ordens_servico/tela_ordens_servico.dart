@@ -6,7 +6,6 @@ import '../../providers/ordem_servico_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/placa_mercosul.dart';
 
-
 // Estrutura
 class Item {
   final String placa;
@@ -14,9 +13,19 @@ class Item {
   final String tipoVeiculo;
   final String categoriaVeiculo;
   final String marcaModeloVeiculo;
+  final String chassi;
   final VoidCallback onTap;
 
-  Item(this.placa, this.situacao, this.tipoVeiculo, this.categoriaVeiculo, this.marcaModeloVeiculo, {required this.onTap});
+  Item(
+      this.placa,
+      this.situacao,
+      this.tipoVeiculo,
+      this.categoriaVeiculo,
+      this.marcaModeloVeiculo,
+      this.chassi,
+      {
+        required this.onTap,
+      });
 }
 
 // Componente
@@ -39,11 +48,23 @@ class ItemDaLista extends StatelessWidget {
                 categoriaVeiculo: item.categoriaVeiculo,
                 marcaModeloVeiculo: item.marcaModeloVeiculo,
               ),
-              SizedBox(width: 16.0),
+              SizedBox(width: 2.0),
               Expanded(
-                child: Text(
-                  item.marcaModeloVeiculo,
-                  textAlign: TextAlign.left,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.marcaModeloVeiculo,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    SizedBox(height: 0.0),
+                    Text(
+                      item.chassi,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -98,7 +119,8 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
             ordemServico['situacao'].toString(),
             ordemServico['tipoVeiculo'].toString(),
             ordemServico['categoria'].toString(),
-              ordemServico['marca_modelo'] == null ? "Não informado" : ordemServico['marca_modelo'].toString(),
+            ordemServico['marca_modelo'] == null ? "Não informado" : ordemServico['marca_modelo'].toString(),
+            ordemServico['chassi'] == null ? "Não informado" : ordemServico['chassi'].toString(),
             onTap: () {
               _selecionarOrdemServico(ordemServico);
             },
@@ -132,7 +154,8 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
       length: 3, // Número de abas
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Ordens de Serviço',
+          title: Text(
+            'Ordens de Serviço',
             style: GoogleFonts.gabarito(
               textStyle: TextStyle(
                 color: Colors.blue[900],
@@ -146,7 +169,8 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => TelaPesquisar()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => TelaPesquisar()));
               },
             ),
             IconButton(
@@ -179,6 +203,8 @@ class _TelaOrdensServicos extends State<TelaOrdensServico> {
           onRefresh: _atualizarLista,
           child: _isLoading
               ? Center(child: CircularProgressIndicator())
+              : _ordensServicoItems.isEmpty
+              ? Center(child: Text('Nenhuma Ordem de Serviço encontrada.'))
               : ListView(
             children: [
               ItemDaLista(_ordensServicoItems),

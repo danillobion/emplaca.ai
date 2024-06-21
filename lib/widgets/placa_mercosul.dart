@@ -28,7 +28,7 @@ class PlacaMercosul extends StatelessWidget {
     String imagePath = 'assets/images/placas/${veiculo['tipo']}_${veiculo['categoria']}.png';
     double imageWidth = (veiculo['tipo'] == "carro") ? 190 : 113;
     double horizontalOffset = (veiculo['tipo'] == "carro") ? 5.0 : 25.0;
-    double verticalOffset = (veiculo['tipo'] == "carro") ? -14.0 : -6.0;
+    double verticalOffset = (veiculo['tipo'] == "carro") ? -13.0 : -6.0;
 
     Color color = _colorFromString(veiculo['cor'].toString());
 
@@ -51,22 +51,22 @@ class PlacaMercosul extends StatelessWidget {
           top: deslocamentoVertical + verticalOffset,
           child: (veiculo['tipo'] == "moto")
               ? Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '$letras\n$numeros',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                  height: 1.1,
-                  fontFamily: 'FE-FONT',
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '$letras\n$numeros',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    height: 1.1,
+                    fontFamily: 'FE-FONT',
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          )
+              ],
+            )
               : Text(
             '$letras$numeros',
             style: TextStyle(
